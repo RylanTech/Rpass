@@ -1,0 +1,23 @@
+.box {
+  border: 3px solid black;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+.box:hover {
+  background-color: #63809c
+}
+.searchNav {
+  background-color: #63809c;
+}
+.searchBar {
+  padding: 15px;
+}
+.search {
+  margin-top: 16px;
+}
+.searchBox {
+  background-color: white;
+  position: absolute;
+  border: 1px solid rgb(184, 184, 184);
+}

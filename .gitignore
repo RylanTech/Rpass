@@ -1,4 +1,5 @@
 node_modules/
 Rpass-backend/node_modules/
+rpass-frontend/node_modules/
 build/
 .env
