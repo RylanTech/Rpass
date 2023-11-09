@@ -15,8 +15,6 @@ export const getPassTitles: RequestHandler = async (req, res, next) => {
                 passArray.push(entry.serviceName)
             })
 
-            console.log(passArray)
-
             res.status(200).json(passArray)
         } else {
             res.status(401).send()
@@ -39,7 +37,6 @@ export const getPass: RequestHandler = async (req, res, next) => {
                     let retrivedPass: any = await pass.findOne({ where: { serviceName: name } })
                     let unEncrptedPass = retrivedPass.dataValues
 
-                    console.log(unEncrptedPass)
                     if (retrivedPass.email) {
                         unEncrptedPass.email = await decryptString(retrivedPass.email, masterPass)
                     }
@@ -62,7 +59,7 @@ export const getPass: RequestHandler = async (req, res, next) => {
 
                     res.status(200).send(retrivedPass)
                 } else {
-                    res.status(401).send("Wrong masterPass")
+                    res.status(200).send(false)
                 }
             } else {
                 res.status(400).send("masterPass required")
@@ -112,10 +109,10 @@ export const createPass: RequestHandler = async (req, res, next) => {
                             storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
                         }
 
-                        const created = pass.create(storedPass)
-                        res.status(200).send(created)
+                        pass.create(storedPass)
+                        res.status(200).send(true)
                     } else {
-                        res.status(401).send("Invalid Master Password")
+                        res.status(200).send(false)
                     }
                 } else {
                     res.status(400).send("masterPass required")

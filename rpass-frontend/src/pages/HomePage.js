@@ -1,13 +1,12 @@
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../contexts/UserContext"
 import { Link, useNavigate } from "react-router-dom"
-import { Container, Form, Row } from "react-bootstrap"
+import { Button, Container, Form, Modal, Row } from "react-bootstrap"
 import { PassContext } from "../contexts/PassContext"
 
 function Homepage() {
     const [passes, setPasses] = useState()
     const [searchArr, setSearchArr] = useState()
-    const [isSearch, setIsSearch] = useState()
 
     const { verify } = useContext(UserContext)
     const { getPasses, searchPasses } = useContext(PassContext)
@@ -26,6 +25,8 @@ function Homepage() {
         startup()
     }, [])
 
+   
+
     async function handleChange(e) {
         if (!e.target.value) {
             setSearchArr(null)
@@ -38,13 +39,15 @@ function Homepage() {
     function mapThroughSearches() {
         if (searchArr) {
             return searchArr.map((title) => {
-                console.log(title)
                 return (
-                    <Link>
+                    <>
+                        <Link to={`/pass/${title}`}>
                         <div className="col-8 searchBox">
-                            {title}
+                            <h2>{title}</h2>
                         </div>
-                    </Link>
+                        </Link>
+
+                    </>
                 )
             })
         }
@@ -55,11 +58,13 @@ function Homepage() {
             return passes.map((pass) => {
                 return (
                     <div className="col-12 col-md-6">
+                        <Link className="textNone" to={`/pass/${pass}`}>
                         <div className="col-12 box">
                             <center>
                                 <h2>{pass}</h2>
                             </center>
                         </div>
+                        </Link>
                     </div>
                 )
             })
@@ -73,7 +78,11 @@ function Homepage() {
                     <Row>
                         <div className="col-3">
                             <center>
-                                <h3 className="search"><b>Search</b></h3>
+                                <Link to={"/create"}>
+                                    <Button className="createBtn">
+                                        Create
+                                    </Button>
+                                </Link>
                             </center>
                         </div>
                         <Form.Group
