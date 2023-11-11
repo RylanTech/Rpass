@@ -1,21 +1,30 @@
 import { useContext, useEffect, useState } from "react"
-import { Button, Container, Form, Row } from "react-bootstrap"
+import { Button, Container, Form, Modal, Row } from "react-bootstrap"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { PassContext } from "../contexts/PassContext"
 
-function CreatePage() {
+function EditPassPage() {
     const [serviceName, setServiceName] = useState()
     const [email, setEmail] = useState()
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()
     const [twoFactorKey, setTwoFactorKey] = useState()
     const [otherNotes, setOtherNotes] = useState()
+    const [passId, setPassId] = useState()
     const [masterPass, setMasterPass] = useState()
     const [message, setMessage] = useState()
+    const [show, setShow] = useState()
 
-    const {createPass} = useContext(PassContext)
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const {editPass, getPass } = useContext(PassContext)
     const navigate = useNavigate()
     let params = useParams()
+
+    useEffect(() => {
+        handleShow()
+    },[])
 
     async function handleSubmit() {
         const pass = {
@@ -28,7 +37,7 @@ function CreatePage() {
             masterPass: masterPass
         }
 
-        let res = await createPass(pass)
+        let res = await editPass(pass, passId)
         if (res === true) {
             navigate("/")
         } else {
@@ -36,14 +45,64 @@ function CreatePage() {
         }
     }
 
+    async function handleGet() {
+        let pass = await getPass(params.name, masterPass)
+
+        if (pass) {
+            setEmail(pass.email)
+            setOtherNotes(pass.otherNotes)
+            setPassword(pass.password)
+            setUsername(pass.username)
+            setServiceName(pass.serviceName)
+            setTwoFactorKey(pass.twoFactorKey)
+            setPassId(pass.passId)
+
+            handleClose()
+        }
+    }
+
     return (
         <>
+        <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Master Password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div>
+                        {message ? (
+                            <>
+                                <div className="col-12 message">
+                                    {message}
+                                </div>
+                                <br />
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                        <Form.Control
+                            type="password"
+                            value={masterPass}
+                            onChange={(e) => setMasterPass(e.target.value)}
+                        />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Link to={"/"}>
+                        <Button variant="secondary">
+                            Close
+                        </Button>
+                    </Link>
+                    <Button onClick={handleGet}>
+                        Submit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         <div className="searchNav">
                 <Container>
                     <Row>
                         <div className="col-3">
                             <center>
-                                <h3 className="passName"><b>Create</b></h3>
+                                <h3 className="passName"><b>Edit</b></h3>
                             </center>
                         </div>
                         <div className="col-9">
@@ -115,7 +174,7 @@ function CreatePage() {
                             />
                             </div>
                             <div className="col-3">
-                                <Button onClick={handleSubmit}>Create</Button>
+                                <Button onClick={handleSubmit}>Edit</Button>
                             </div>
                             </Row>
                         </Form.Group>
@@ -136,4 +195,4 @@ function CreatePage() {
         </>
     )
 }
-export default CreatePage
+export default EditPassPage

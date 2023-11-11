@@ -24,9 +24,11 @@
   background-color: white;
   position: absolute;
   border: 1px solid rgb(184, 184, 184);
-  border-radius: 5px;
+  border-radius: 3px;
   color: black;
-  text-decoration: underline;
+  text-decoration: none;
+  padding-left: 7px;
+  padding-top: 2px;
 }
 .searchBox:hover {
   background-color: #bbc4cd;

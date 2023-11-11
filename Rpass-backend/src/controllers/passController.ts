@@ -77,10 +77,10 @@ export const createPass: RequestHandler = async (req, res, next) => {
         let usr = await verifyUser(req)
         if (usr) {
             let passEntry = req.body
-            if (passEntry.serviceName) {
+            if (passEntry.serviceName && passEntry.userId === usr.userId) {
                 const masterPass = req.body.masterPass
+
                 if (masterPass) {
-                    const masterPass = req.body.masterPass
 
                     const passwordMatch = await comparePasswords(masterPass, usr.password)
 
@@ -138,8 +138,46 @@ export const editPass: RequestHandler = async (req, res, next) => {
             if (oldEntry) {
                 if (usr.userId === oldEntry.userId) {
                     if (passEntry.serviceName) {
-                        const updated = pass.update(passEntry, { where: { userId: id } })
-                        res.status(200).send(updated)
+
+                        const masterPass = req.body.masterPass
+                        if (masterPass) {
+                            const masterPass = req.body.masterPass
+
+                            const passwordMatch = await comparePasswords(masterPass, usr.password)
+
+                            if (passwordMatch) {
+                                let storedPass = passEntry
+
+                                storedPass.userId = usr.userId
+
+                                if (passEntry.email) {
+                                    storedPass.email = await encryptString(passEntry.email, masterPass)
+                                }
+
+                                if (passEntry.password) {
+                                    storedPass.password = await encryptString(passEntry.password, masterPass)
+                                }
+
+                                if (passEntry.username) {
+                                    storedPass.username = await encryptString(passEntry.username, masterPass)
+                                }
+
+                                if (passEntry.twoFactorKey) {
+                                    storedPass.twoFactorKey = await encryptString(passEntry.twoFactorKey, masterPass)
+                                }
+
+                                if (passEntry.otherNotes) {
+                                    storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
+                                }
+
+                                pass.update(storedPass, {where: {passId: id}})
+                                res.status(200).send(true)
+                            } else {
+                                res.status(200).send(false)
+                            }
+                        } else {
+                            res.status(400).send("masterPass required")
+                        }
                     }
                 } else {
                     res.status(401).send("Not the same user")
@@ -187,3 +225,27 @@ export const searchPass: RequestHandler = async (req, res, next) => {
         res.status(404).json({ error: 'Database search query failed' });
     }
 };
+
+export const deletePass: RequestHandler = async (req, res, next) => {
+    try {
+        let id = req.params.id
+        let usr = await verifyUser(req)
+        if (usr) {
+            const oldEntry = await pass.findByPk(id)
+            if (oldEntry) {
+                if (usr.userId === oldEntry.userId) {
+                    pass.destroy({ where: { passId: id } })
+                    res.status(200).send()
+                } else {
+                    res.status(401).send("Not the same user")
+                }
+            } else {
+                res.status(400).send("No such entry")
+            }
+        } else {
+            res.status(401).send()
+        }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}

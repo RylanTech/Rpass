@@ -25,7 +25,7 @@ function Homepage() {
         startup()
     }, [])
 
-   
+
 
     async function handleChange(e) {
         if (!e.target.value) {
@@ -37,19 +37,21 @@ function Homepage() {
     }
 
     function mapThroughSearches() {
+        console.log(searchArr)
         if (searchArr) {
-            return searchArr.map((title) => {
+            return searchArr.map((title, index) => {
+                const marginTop = index * 40; // Calculate margin-top based on index
+    
                 return (
-                    <>
+                    <div className="col-12" key={index}>
                         <Link to={`/pass/${title}`}>
-                        <div className="col-8 searchBox">
-                            <h2>{title}</h2>
-                        </div>
+                            <div className="col-8 searchBox" style={{ marginTop: `${marginTop}px` }}>
+                                <h2>{title}</h2>
+                            </div>
                         </Link>
-
-                    </>
-                )
-            })
+                    </div>
+                );
+            });
         }
     }
 
@@ -59,11 +61,11 @@ function Homepage() {
                 return (
                     <div className="col-12 col-md-6">
                         <Link className="textNone" to={`/pass/${pass}`}>
-                        <div className="col-12 box">
-                            <center>
-                                <h2>{pass}</h2>
-                            </center>
-                        </div>
+                            <div className="col-12 box">
+                                <center>
+                                    <h2>{pass}</h2>
+                                </center>
+                            </div>
                         </Link>
                     </div>
                 )
@@ -93,7 +95,11 @@ function Homepage() {
                             {searchArr ? (
                                 <>
                                     <Row>
-                                        {mapThroughSearches()}
+                                        <Container>
+                                            <Row>
+                                            {mapThroughSearches()}
+                                            </Row>
+                                        </Container>
                                     </Row>
                                 </>
                             ) : (

@@ -59,13 +59,39 @@ export const PassProvider = (props) => {
             );
     }
 
+    function deletePass(id) {
+        let myHeaders = {
+            Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+        };
+
+        return axios.delete(baseUrl + "api/pass/delete/" + id, { headers: myHeaders })
+        .then(response => {
+            return new Promise(resolve => resolve(response.data));
+        }
+        );
+    }
+
+    function editPass(pass, id) {
+        let myHeaders = {
+            Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+        };
+
+        return axios.put(baseUrl + "api/pass/edit/" + id, pass, { headers: myHeaders })
+        .then(response => {
+            return new Promise(resolve => resolve(response.data));
+        }
+        );
+    }
+
     return (
         <PassContext.Provider
             value={{
                 getPasses,
                 searchPasses,
                 getPass,
-                createPass
+                createPass,
+                deletePass,
+                editPass
             }}
         >
             {props.children}

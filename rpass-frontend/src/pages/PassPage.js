@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { PassContext } from "../contexts/PassContext"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { Button, Container, Form, Modal, Row } from "react-bootstrap"
 
 function PassPage() {
@@ -16,8 +16,9 @@ function PassPage() {
     const handle2Close = () => set2Show(false);
     const handle2Show = () => set2Show(true);
 
-    const { getPass } = useContext(PassContext)
+    const { getPass, deletePass } = useContext(PassContext)
     const params = useParams()
+    const navigate = useNavigate()
     const passName = params.name
 
     useEffect(() => {
@@ -44,12 +45,17 @@ function PassPage() {
         handle2Show()
     }
 
-    function deletePass() {
-
+    function delPass() {
+        console.log(pass.passId)
+        deletePass(pass.passId)
+        navigate('/')
     }
 
     function goThroughStuff() {
-        const formattedMessage = pass.otherNotes.replace(/\n/g, '<br>');
+        let formattedMessage
+        if (pass.otherNotes) {
+            formattedMessage = pass.otherNotes.replace(/\n/g, '<br>');
+        }
         return (
             <>
                 {pass.email ? (
@@ -90,7 +96,14 @@ function PassPage() {
                 )}
                 {pass.serviceName ? (
                     <>
-                        <Button variant="danger" className="col-3 delBtn" onClick={handleDelete}>Delete</Button>
+                        <div className="col-2 col-lg-1">
+                        <Button variant="danger" className="delBtn" onClick={handleDelete}>Delete</Button>
+                        </div>
+                        <div className="col-3 col-md-1">
+                            <Link to={`/edit/${passName}`}>
+                            <Button variant="info" className="editBtn">Edit</Button>
+                            </Link>
+                        </div>
                     </>
                 ) : (
                     <></>
@@ -149,7 +162,7 @@ function PassPage() {
                     <Button onClick={handle2Close} variant="secondary">
                         Close
                     </Button>
-                    <Button variant="danger" onClick={deletePass}>
+                    <Button variant="danger" onClick={delPass}>
                         Delete
                     </Button>
                 </Modal.Footer>
