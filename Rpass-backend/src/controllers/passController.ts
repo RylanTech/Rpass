@@ -77,7 +77,8 @@ export const createPass: RequestHandler = async (req, res, next) => {
         let usr = await verifyUser(req)
         if (usr) {
             let passEntry = req.body
-            if (passEntry.serviceName && passEntry.userId === usr.userId) {
+            console.log(passEntry.serviceName)
+            if (passEntry.serviceName) {
                 const masterPass = req.body.masterPass
 
                 if (masterPass) {
@@ -137,7 +138,7 @@ export const editPass: RequestHandler = async (req, res, next) => {
             const oldEntry = await pass.findByPk(id)
             if (oldEntry) {
                 if (usr.userId === oldEntry.userId) {
-                    if (passEntry.serviceName) {
+                    if (passEntry.serviceName && passEntry.userId === usr.userId) {
 
                         const masterPass = req.body.masterPass
                         if (masterPass) {
