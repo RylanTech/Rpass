@@ -42,7 +42,7 @@
   float: right;
 }
 .entry {
-  font-size: 25px;
+  font-size: 18px;
 }
 .message {
   background-color: rgb(210, 149, 149);
@@ -63,4 +63,10 @@
 }
 .formBox {
   margin-top: 15px!important;
+}
+
+@media (min-width: 992px) {
+  .entry {
+    font-size: 25px;
+  }
 }
