@@ -78,6 +78,7 @@ export const PassProvider = (props) => {
 
         return axios.put(baseUrl + "api/pass/edit/" + id, pass, { headers: myHeaders })
         .then(response => {
+            console.log(response.data)
             return new Promise(resolve => resolve(response.data));
         }
         );

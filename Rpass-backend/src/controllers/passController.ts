@@ -138,7 +138,7 @@ export const editPass: RequestHandler = async (req, res, next) => {
             const oldEntry = await pass.findByPk(id)
             if (oldEntry) {
                 if (usr.userId === oldEntry.userId) {
-                    if (passEntry.serviceName && passEntry.userId === usr.userId) {
+                    if (passEntry.serviceName) {
 
                         const masterPass = req.body.masterPass
                         if (masterPass) {
@@ -179,6 +179,8 @@ export const editPass: RequestHandler = async (req, res, next) => {
                         } else {
                             res.status(400).send("masterPass required")
                         }
+                    } else {
+                        res.status(400).send("serviceName Required")
                     }
                 } else {
                     res.status(401).send("Not the same user")
