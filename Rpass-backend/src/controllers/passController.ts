@@ -1,9 +1,10 @@
 import { RequestHandler } from "express";
 import { pass } from "../models/pass";
-import { comparePasswords } from "../services/auth";
+import { comparePasswords, hashPassword } from "../services/auth";
 import { verifyUser } from "../services/authService";
 import { decryptString, encryptString } from "../services/stringEncryption";
 import { Op, Sequelize } from "sequelize";
+import { user } from "../models/user";
 
 export const getPassTitles: RequestHandler = async (req, res, next) => {
     try {
@@ -77,7 +78,8 @@ export const createPass: RequestHandler = async (req, res, next) => {
         let usr = await verifyUser(req)
         if (usr) {
             let passEntry = req.body
-            if (passEntry.serviceName && passEntry.userId === usr.userId) {
+            console.log(passEntry)
+            if (passEntry.serviceName) {
                 const masterPass = req.body.masterPass
 
                 if (masterPass) {
@@ -130,11 +132,11 @@ export const createPass: RequestHandler = async (req, res, next) => {
 
 export const editPass: RequestHandler = async (req, res, next) => {
     try {
-        let id = req.params.id
-        let usr = await verifyUser(req)
+        let id = req.params.id;
+        let usr = await verifyUser(req);
         if (usr) {
-            let passEntry = req.body
-            const oldEntry = await pass.findByPk(id)
+            let passEntry = req.body;
+            const oldEntry = await pass.findByPk(id);
             if (oldEntry) {
                 if (usr.userId === oldEntry.userId) {
                     if (passEntry.serviceName) {
@@ -170,7 +172,7 @@ export const editPass: RequestHandler = async (req, res, next) => {
                                     storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
                                 }
 
-                                pass.update(storedPass, {where: {passId: id}})
+                                pass.update(storedPass, { where: { passId: id } })
                                 res.status(200).send(true)
                             } else {
                                 res.status(200).send(false)
@@ -188,6 +190,103 @@ export const editPass: RequestHandler = async (req, res, next) => {
         } else {
             res.status(401).send()
         }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+export const resetMasterPass: RequestHandler = async (req, res, next) => {
+    try {
+        let usr = await verifyUser(req)
+        if (usr) {
+            let masterPass = req.body.masterPass;
+            let newMasterPass = req.body.newMasterPass;
+            if (masterPass) {
+                if (newMasterPass) {
+                    const passwordMatch = await comparePasswords(masterPass, usr.password)
+                    if (passwordMatch) {
+                        let encryptedPasses = await pass.findAll({ where: { userId: usr?.userId } })
+                        console.log(encryptedPasses)
+                        if (encryptedPasses.length > 0) {
+                            encryptedPasses.map(async (encryptedPass) => {
+                                let retrivedPass: any = await pass.findOne({ where: { serviceName: encryptedPass.serviceName } })
+                                let unEncrptedPass = retrivedPass.dataValues
+
+
+                                if (retrivedPass.email) {
+                                    unEncrptedPass.email = await decryptString(retrivedPass.email, masterPass)
+                                }
+
+                                if (retrivedPass.password) {
+                                    unEncrptedPass.password = await decryptString(retrivedPass.password, masterPass)
+                                }
+
+                                if (retrivedPass.username) {
+                                    unEncrptedPass.username = await decryptString(retrivedPass.username, masterPass)
+                                }
+
+                                if (retrivedPass.twoFactorKey) {
+                                    unEncrptedPass.twoFactorKey = await decryptString(retrivedPass.twoFactorKey, masterPass)
+                                }
+
+                                if (retrivedPass.otherNotes) {
+                                    unEncrptedPass.otherNotes = await decryptString(retrivedPass.otherNotes, masterPass)
+                                }
+
+                                let newStoredPass = unEncrptedPass
+
+                                //Afer unencrypting the passwords, re-encrypt them with the new password
+
+                                if (unEncrptedPass.email) {
+                                    newStoredPass.email = await encryptString(unEncrptedPass.email, newMasterPass)
+                                }
+        
+                                if (unEncrptedPass.password) {
+                                    newStoredPass.password = await encryptString(unEncrptedPass.password, newMasterPass)
+                                }
+        
+                                if (unEncrptedPass.username) {
+                                    newStoredPass.username = await encryptString(unEncrptedPass.username, newMasterPass)
+                                }
+        
+                                if (unEncrptedPass.twoFactorKey) {
+                                    newStoredPass.twoFactorKey = await encryptString(unEncrptedPass.twoFactorKey, newMasterPass)
+                                }
+        
+                                if (unEncrptedPass.otherNotes) {
+                                    newStoredPass.otherNotes = await encryptString(unEncrptedPass.otherNotes, newMasterPass)
+                                }
+
+                                console.log()
+                                
+                                let id = unEncrptedPass.passId;
+                                pass.update(newStoredPass, {where: {passId: id}})
+                            })
+
+                            let newUser = usr.dataValues
+                            newUser.password = await hashPassword(newMasterPass)
+                            user.update(newUser, {where: {userId: newUser.userId}})
+                            res.status(200).send("Passwords re-encryted with new password, and masterPass reset")
+
+                        } else {
+                            let newUser = usr.dataValues
+                            newUser.password = await hashPassword(newMasterPass)
+                            user.update(newUser, {where: {userId: newUser.userId}})
+                            res.status(200).send("masterPass reset")
+                        }
+                    } else {
+                        res.status(200).send(false)
+                    }
+                } else {
+                    res.status(400).send("No new masterPass")
+                }
+            } else {
+                res.status(400).send("masterPass required")
+            }
+        } else {
+            res.status(404).send("No user found")
+        }
+
     } catch (error) {
         res.status(500).send(error)
     }

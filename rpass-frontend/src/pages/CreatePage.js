@@ -62,6 +62,9 @@ function CreatePage() {
                     <Form>
                         <Form.Group>
                             <Form.Label>Service Name</Form.Label>
+                            <div className="minorText">
+                                (No special char)
+                            </div>
                             <Form.Control
                             placeholder="Required"
                             value={serviceName}

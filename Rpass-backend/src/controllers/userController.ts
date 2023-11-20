@@ -49,27 +49,27 @@ export const createUser: RequestHandler = async (req, res, next) => {
 export const loginUser: RequestHandler = async (req, res, next) => {
 
     try {
-            // Look up user by their email
-    let existingUser: user | null = await user.findOne({
-        where: { email: req.body.email }
-    });
+        // Look up user by their email
+        let existingUser: user | null = await user.findOne({
+            where: { email: req.body.email }
+        });
 
-    // If user exists, check that password matches
-    if (existingUser) {
-        let passwordsMatch = await comparePasswords(req.body.password, existingUser.password);
+        // If user exists, check that password matches
+        if (existingUser) {
+            let passwordsMatch = await comparePasswords(req.body.password, existingUser.password);
 
-        // If passwords match, create a JWT
-        if (passwordsMatch) {
-            let token = await signUserToken(existingUser);
-            res.status(200).json(token);
+            // If passwords match, create a JWT
+            if (passwordsMatch) {
+                let token = await signUserToken(existingUser);
+                res.status(200).json(token);
+            }
+            else {
+                res.status(401).json('Invalid password');
+            }
         }
         else {
-            res.status(401).json('Invalid password');
+            res.status(401).json('Invalid email');
         }
-    }
-    else {
-        res.status(401).json('Invalid email');
-    }
     } catch {
         res.status(500).send()
     }
@@ -78,7 +78,7 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 export const verify: RequestHandler = async (req, res, next) => {
     try {
         let usr = await verifyUser(req)
-                
+
         if (usr) {
             res.status(200).send(true)
         } else {

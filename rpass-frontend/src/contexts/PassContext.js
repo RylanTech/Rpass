@@ -83,6 +83,18 @@ export const PassProvider = (props) => {
         );
     }
 
+    function resetPass(masterPass) {
+        let myHeaders = {
+            Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+        };
+
+        return axios.post(baseUrl + "api/pass/user/reset", masterPass, { headers: myHeaders })
+        .then(response => {
+            return new Promise(resolve => resolve(response.data));
+        }
+        );
+    }
+
     return (
         <PassContext.Provider
             value={{
@@ -91,7 +103,8 @@ export const PassProvider = (props) => {
                 getPass,
                 createPass,
                 deletePass,
-                editPass
+                editPass,
+                resetPass
             }}
         >
             {props.children}

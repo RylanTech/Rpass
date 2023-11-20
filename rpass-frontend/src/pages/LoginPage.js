@@ -24,7 +24,7 @@ function Loginpage() {
             <Container>
                 <Row>
                     <Form.Group>
-                        <Form.Label>Email</Form.Label>
+                        <Form.Label>Name or Email</Form.Label>
                         <Form.Control
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}

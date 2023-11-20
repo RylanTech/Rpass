@@ -58,6 +58,7 @@ function PassPage() {
         }
         return (
             <>
+
                 {pass.email ? (
                     <div className="col-12 col-lg-6 entry">
                         Email: <div className="fl">{pass.email}</div>
@@ -96,12 +97,14 @@ function PassPage() {
                 )}
                 {pass.serviceName ? (
                     <>
-                        <div className="col-2 col-lg-1">
-                        <Button variant="danger" className="delBtn" onClick={handleDelete}>Delete</Button>
+                        <br/><br/>
+                        <div className="col-3 col-lg-2">
+                            <Button variant="danger" className="delBtn col-12" onClick={handleDelete}>Delete</Button>
                         </div>
-                        <div className="col-3 col-md-1">
+                        <div className="col-6 col-lg-8"/>
+                        <div className="col-3 col-lg-2">
                             <Link to={`/edit/${passName}`}>
-                            <Button variant="info" className="editBtn">Edit</Button>
+                                <Button className="editBtn col-12">Edit</Button>
                             </Link>
                         </div>
                     </>
@@ -185,8 +188,10 @@ function PassPage() {
                     </Row>
                 </Container>
             </div>
+            <br/>
             <Container>
                 <Row>
+                    
                     {pass ? (
                         goThroughStuff()
                     ) : (

@@ -7,6 +7,10 @@ import { PassContext } from "../contexts/PassContext"
 function Homepage() {
     const [passes, setPasses] = useState()
     const [searchArr, setSearchArr] = useState()
+    const [show, setShow] = useState()
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const { verify } = useContext(UserContext)
     const { getPasses, searchPasses } = useContext(PassContext)
@@ -41,7 +45,7 @@ function Homepage() {
         if (searchArr) {
             return searchArr.map((title, index) => {
                 const marginTop = index * 40; // Calculate margin-top based on index
-    
+
                 return (
                     <div className="col-12" key={index}>
                         <Link to={`/pass/${title}`}>
@@ -75,18 +79,49 @@ function Homepage() {
 
     return (
         <>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title><b>Rpass</b></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Link className="textNone" to={'/create'}>
+                        <div>
+                            <div className="col-12 box">
+                                <center>
+                                    <h2>Create Pass</h2>
+                                </center>
+                            </div>
+                        </div>
+                    </Link>
+                    <Link className="textNone" to={'/reset'}>
+                        <div>
+                            <div className="col-12 box">
+                                <center>
+                                    <h2>Reset Master Pass</h2>
+                                </center>
+                            </div>
+                        </div>
+                    </Link>
+                    <br/><br/><br/>
+                    <Link className="textNone" to={'/howitworks'}>
+                        <div>
+                            <div className="col-12 box">
+                                <center>
+                                    <h2>How It Works</h2>
+                                </center>
+                            </div>
+                        </div>
+                    </Link>
+                </Modal.Body>
+                <Modal.Footer>
+                        <Button onClick={handleClose} variant="secondary">
+                            Close
+                        </Button>
+                </Modal.Footer>
+            </Modal>
             <div className="searchNav">
                 <Container>
                     <Row>
-                        <div className="col-3">
-                            <center>
-                                <Link to={"/create"}>
-                                    <Button className="createBtn">
-                                        Create
-                                    </Button>
-                                </Link>
-                            </center>
-                        </div>
                         <Form.Group
                             className="col-9 searchBar">
                             <Form.Control
@@ -97,7 +132,7 @@ function Homepage() {
                                     <Row>
                                         <Container>
                                             <Row>
-                                            {mapThroughSearches()}
+                                                {mapThroughSearches()}
                                             </Row>
                                         </Container>
                                     </Row>
@@ -106,6 +141,16 @@ function Homepage() {
                                 <></>
                             )}
                         </Form.Group>
+                        <div className="col-3">
+                            <center>
+                                <Button
+                                    className="createBtn col-12"
+                                    onClick={handleShow}
+                                >
+                                    Menu
+                                </Button>
+                            </center>
+                        </div>
                     </Row>
                 </Container>
             </div>
