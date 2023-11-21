@@ -36,6 +36,7 @@ function EditPassPage() {
             otherNotes: otherNotes,
             masterPass: masterPass
         }
+        console.log(pass)
 
         let res = await editPass(pass, passId)
         if (res === true) {

@@ -78,7 +78,6 @@ export const createPass: RequestHandler = async (req, res, next) => {
         let usr = await verifyUser(req)
         if (usr) {
             let passEntry = req.body
-            console.log(passEntry)
             if (passEntry.serviceName) {
                 const masterPass = req.body.masterPass
 
@@ -180,6 +179,8 @@ export const editPass: RequestHandler = async (req, res, next) => {
                         } else {
                             res.status(400).send("masterPass required")
                         }
+                    } else {
+                        res.status(400).send("serviceName Required")
                     }
                 } else {
                     res.status(401).send("Not the same user")

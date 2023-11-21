@@ -60,35 +60,35 @@ function PassPage() {
             <>
 
                 {pass.email ? (
-                    <div className="col-12 col-lg-6 entry">
+                    <div className="col-12 entry">
                         Email: <div className="fl">{pass.email}</div>
                     </div>
                 ) : (
                     <></>
                 )}
                 {pass.username ? (
-                    <div className="col-12 col-lg-6 entry">
+                    <div className="col-12 entry">
                         Username: <div className="fl">{pass.username}</div>
                     </div>
                 ) : (
                     <></>
                 )}
                 {pass.password ? (
-                    <div className="col-12 col-lg-6 entry">
+                    <div className="col-12 entry">
                         Password: <div className="fl">{pass.password}</div>
                     </div>
                 ) : (
                     <></>
                 )}
                 {pass.twoFactorKey ? (
-                    <div className="col-12 col-lg-6 entry">
+                    <div className="col-12 entry">
                         Two Factor Key: <div className="fl">{pass.twoFactorKey}</div>
                     </div>
                 ) : (
                     <></>
                 )}
                 {pass.otherNotes ? (
-                    <div className="col-12 col-lg-6 entry">
+                    <div className="col-12 entry">
                         Other Notes: <br />
                         <div dangerouslySetInnerHTML={{ __html: formattedMessage }} />
                     </div>

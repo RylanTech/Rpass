@@ -2,8 +2,8 @@ import axios from "axios";
 import { createContext, useState } from "react";
 
 export const PassContext = createContext()
-let baseUrl = "http://localhost:3001/"
-// let baseUrl = "http://192.168.1.2:3001/"
+// let baseUrl = "http://localhost:3001/"
+let baseUrl = "http://192.168.1.18:3002/"
 
 export const PassProvider = (props) => {
 
@@ -78,6 +78,7 @@ export const PassProvider = (props) => {
 
         return axios.put(baseUrl + "api/pass/edit/" + id, pass, { headers: myHeaders })
         .then(response => {
+            console.log(response.data)
             return new Promise(resolve => resolve(response.data));
         }
         );

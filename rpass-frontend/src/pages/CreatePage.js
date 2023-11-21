@@ -74,6 +74,7 @@ function CreatePage() {
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
                             <Form.Control
+                            name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             />
@@ -88,6 +89,7 @@ function CreatePage() {
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
                             <Form.Control
+                            type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             />
@@ -113,6 +115,7 @@ function CreatePage() {
                             <div className="col-9">
                             <Form.Control
                             type="password"
+                            name="password"
                             value={masterPass}
                             onChange={(e) => setMasterPass(e.target.value)}
                             />
