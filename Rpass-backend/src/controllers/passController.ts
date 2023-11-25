@@ -35,7 +35,7 @@ export const getPass: RequestHandler = async (req, res, next) => {
             if (masterPass) {
                 const passwordMatch = await comparePasswords(masterPass, usr.password)
                 if (passwordMatch) {
-                    let retrivedPass: any = await pass.findOne({ where: { serviceName: name } })
+                    let retrivedPass: any = await pass.findOne({ where: { serviceName: name, userId: usr.userId } })
                     let unEncrptedPass = retrivedPass.dataValues
 
                     if (retrivedPass.email) {
@@ -82,42 +82,49 @@ export const createPass: RequestHandler = async (req, res, next) => {
             if (passEntry.serviceName) {
                 const masterPass = req.body.masterPass
 
-                if (masterPass) {
+                let retrivedPass: any = await pass.findOne({ where: { serviceName: passEntry.serviceName, userId: usr.userId } })
 
-                    const passwordMatch = await comparePasswords(masterPass, usr.password)
+                if (!retrivedPass) {
+                    if (masterPass) {
 
-                    if (passwordMatch) {
-                        let storedPass = passEntry
-
-                        storedPass.userId = usr.userId
-
-                        if (passEntry.email) {
-                            storedPass.email = await encryptString(passEntry.email, masterPass)
+                        const passwordMatch = await comparePasswords(masterPass, usr.password)
+    
+                        if (passwordMatch) {
+                            let storedPass = passEntry
+    
+                            storedPass.userId = usr.userId
+    
+                            if (passEntry.email) {
+                                storedPass.email = await encryptString(passEntry.email, masterPass)
+                            }
+    
+                            if (passEntry.password) {
+                                storedPass.password = await encryptString(passEntry.password, masterPass)
+                            }
+    
+                            if (passEntry.username) {
+                                storedPass.username = await encryptString(passEntry.username, masterPass)
+                            }
+    
+                            if (passEntry.twoFactorKey) {
+                                storedPass.twoFactorKey = await encryptString(passEntry.twoFactorKey, masterPass)
+                            }
+    
+                            if (passEntry.otherNotes) {
+                                storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
+                            }
+    
+                            pass.create(storedPass)
+                            res.sendStatus(201).send(1)
+                        } else {
+                            res.sendStatus(202).send(2)
                         }
-
-                        if (passEntry.password) {
-                            storedPass.password = await encryptString(passEntry.password, masterPass)
-                        }
-
-                        if (passEntry.username) {
-                            storedPass.username = await encryptString(passEntry.username, masterPass)
-                        }
-
-                        if (passEntry.twoFactorKey) {
-                            storedPass.twoFactorKey = await encryptString(passEntry.twoFactorKey, masterPass)
-                        }
-
-                        if (passEntry.otherNotes) {
-                            storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
-                        }
-
-                        pass.create(storedPass)
-                        res.status(200).send(true)
                     } else {
-                        res.status(200).send(false)
+                        res.status(400).send("masterPass required")
                     }
                 } else {
-                    res.status(400).send("masterPass required")
+                    console.log("test")
+                    res.sendStatus(203)
                 }
             } else {
                 res.status(400).send("ServiceName required")
