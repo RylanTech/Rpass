@@ -29,10 +29,16 @@ function CreatePage() {
         }
 
         let res = await createPass(pass)
-        if (res === true) {
+        res = res.status
+        
+        if (res == 203) {
+            setMessage("Service Name is already in use.")
+        } else if (res == 202) {
+            setMessage("Incorrect MasterPass")
+        } else if (203) {
             navigate("/")
         } else {
-            setMessage("Incorrect Master Password")
+            setMessage("Error")
         }
     }
 
