@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { Button, Container, Form, Row } from "react-bootstrap"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { PassContext } from "../contexts/PassContext"
 
 function CreatePage() {
@@ -15,7 +15,6 @@ function CreatePage() {
 
     const {createPass} = useContext(PassContext)
     const navigate = useNavigate()
-    let params = useParams()
 
     async function handleSubmit() {
         const pass = {
