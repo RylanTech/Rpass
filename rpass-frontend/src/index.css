@@ -50,6 +50,12 @@
   padding: 5px;
   border-radius: 5px;
 }
+.successMessage {
+  background-color: rgb(84, 220, 129);
+  border: 2px solid rgb(128, 154, 107);
+  padding: 5px;
+  border-radius: 5px;
+}
 .homeBtn {
   float: right;
   margin-top: 8px

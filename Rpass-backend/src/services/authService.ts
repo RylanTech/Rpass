@@ -1,9 +1,9 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { user } from '../models/user';
+import 'dotenv/config';
 
-
-const secret = 'Super secret secret.... 42';
+const secret = process.env.ENCRYPTSECRET ?? '';
 
 export const signUserToken = async (user: user) => {
   let token = jwt.sign(

@@ -7,35 +7,83 @@ let baseUrl = "http://localhost:3001/"
 
 export const UserProvider = (props) => {
 
-    function login(credentials) {
+  function login(credentials) {
 
-        return axios.post(baseUrl + "api/user/signin", credentials)
-        .then(response => {
-            localStorage.setItem('rpassToken', response.data)
-            return new Promise(resolve => resolve(response.data));
-          }
-        );
-    }
-
-    function verify() {
-        let myHeaders = {
-          Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
-        };
-        return axios.post(baseUrl + "api/user/verify", null, {
-          headers: myHeaders
-        }).then(response => {
-            return new Promise(resolve => resolve(response.data));
-          })
+    return axios.post(baseUrl + "api/user/signin", credentials)
+      .then(response => {
+        localStorage.setItem('rpassToken', response.data)
+        return new Promise(resolve => resolve(response));
       }
+      );
+  }
 
-    return (
-        <UserContext.Provider
-            value={{
-                login,
-                verify
-            }}
-        >
-            {props.children}
-        </UserContext.Provider>
-    )
+  function verify() {
+    let myHeaders = {
+      Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+    };
+    return axios.post(baseUrl + "api/user/verify", null, {
+      headers: myHeaders
+    }).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
+  function twoFactorStatus() {
+    let myHeaders = {
+      Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+    };
+    return axios.get(baseUrl + "api/user/twofactorstatus", {
+      headers: myHeaders
+    }).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
+  function deleteTwoFactor(masterPass) {
+    let myHeaders = {
+      Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+    };
+    return axios.post(baseUrl + "api/user/removetwofactor", masterPass, {
+      headers: myHeaders
+    }).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
+  function addTwoFactor(masterPass) {
+    let myHeaders = {
+      Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+    };
+    return axios.post(baseUrl + "api/user/addtwofactor", masterPass, {
+      headers: myHeaders
+    }).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
+  function testTwoFactor(token) {
+    let myHeaders = {
+      Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
+    };
+    return axios.post(baseUrl + "api/user/testtwofactor", token, {
+      headers: myHeaders
+    }).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
+  return (
+    <UserContext.Provider
+      value={{
+        login,
+        verify,
+        twoFactorStatus,
+        deleteTwoFactor,
+        addTwoFactor,
+        testTwoFactor
+      }}
+    >
+      {props.children}
+    </UserContext.Provider>
+  )
 }

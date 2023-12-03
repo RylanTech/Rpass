@@ -88,32 +88,32 @@ export const createPass: RequestHandler = async (req, res, next) => {
                     if (masterPass) {
 
                         const passwordMatch = await comparePasswords(masterPass, usr.password)
-    
+
                         if (passwordMatch) {
                             let storedPass = passEntry
-    
+
                             storedPass.userId = usr.userId
-    
+
                             if (passEntry.email) {
                                 storedPass.email = await encryptString(passEntry.email, masterPass)
                             }
-    
+
                             if (passEntry.password) {
                                 storedPass.password = await encryptString(passEntry.password, masterPass)
                             }
-    
+
                             if (passEntry.username) {
                                 storedPass.username = await encryptString(passEntry.username, masterPass)
                             }
-    
+
                             if (passEntry.twoFactorKey) {
                                 storedPass.twoFactorKey = await encryptString(passEntry.twoFactorKey, masterPass)
                             }
-    
+
                             if (passEntry.otherNotes) {
                                 storedPass.otherNotes = await encryptString(passEntry.otherNotes, masterPass)
                             }
-    
+
                             pass.create(storedPass)
                             res.sendStatus(201).send(1)
                         } else {
@@ -247,38 +247,38 @@ export const resetMasterPass: RequestHandler = async (req, res, next) => {
                                 if (unEncrptedPass.email) {
                                     newStoredPass.email = await encryptString(unEncrptedPass.email, newMasterPass)
                                 }
-        
+
                                 if (unEncrptedPass.password) {
                                     newStoredPass.password = await encryptString(unEncrptedPass.password, newMasterPass)
                                 }
-        
+
                                 if (unEncrptedPass.username) {
                                     newStoredPass.username = await encryptString(unEncrptedPass.username, newMasterPass)
                                 }
-        
+
                                 if (unEncrptedPass.twoFactorKey) {
                                     newStoredPass.twoFactorKey = await encryptString(unEncrptedPass.twoFactorKey, newMasterPass)
                                 }
-        
+
                                 if (unEncrptedPass.otherNotes) {
                                     newStoredPass.otherNotes = await encryptString(unEncrptedPass.otherNotes, newMasterPass)
                                 }
 
                                 console.log()
-                                
+
                                 let id = unEncrptedPass.passId;
-                                pass.update(newStoredPass, {where: {passId: id}})
+                                pass.update(newStoredPass, { where: { passId: id } })
                             })
 
                             let newUser = usr.dataValues
                             newUser.password = await hashPassword(newMasterPass)
-                            user.update(newUser, {where: {userId: newUser.userId}})
+                            user.update(newUser, { where: { userId: newUser.userId } })
                             res.status(200).send("Passwords re-encryted with new password, and masterPass reset")
 
                         } else {
                             let newUser = usr.dataValues
                             newUser.password = await hashPassword(newMasterPass)
-                            user.update(newUser, {where: {userId: newUser.userId}})
+                            user.update(newUser, { where: { userId: newUser.userId } })
                             res.status(200).send("masterPass reset")
                         }
                     } else {
@@ -311,22 +311,27 @@ export const searchPass: RequestHandler = async (req, res, next) => {
     // if (query.length < minimumQueryLength) {
     //   return res.status(400).json({ error: 'Search query must have at least 3 characters' });
     // }
+
     try {
-        let searchArr: any = []
-        let resultsDB = await pass.findAll({
-            where: {
-                [Op.or]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('serviceName')), 'LIKE', `%${query.toLowerCase()}%`),
-                ]
-            },
-            limit: 5,
-        });
+        let usr = await verifyUser(req)
+        if (usr) {
+            let searchArr: any = []
+            let resultsDB = await pass.findAll({
+                where: {
+                    [Op.or]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('serviceName')), 'LIKE', `%${query.toLowerCase()}%`),
+                    ],
+                    userId: usr.userId,
+                },
+                limit: 5,
+            });
 
-        resultsDB.map((result) => {
-            searchArr.push(result.serviceName)
-        })
+            resultsDB.map((result) => {
+                searchArr.push(result.serviceName)
+            })
 
-        res.status(200).json(searchArr);
+            res.status(200).json(searchArr);
+        }
     } catch (err) {
         res.status(404).json({ error: 'Database search query failed' });
     }

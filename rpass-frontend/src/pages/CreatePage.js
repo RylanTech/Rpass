@@ -69,7 +69,7 @@ function CreatePage() {
                         <Form.Group>
                             <Form.Label>Service Name</Form.Label>
                             <div className="minorText">
-                                (No special char)
+                                (No special characters)
                             </div>
                             <Form.Control
                             placeholder="Required"
