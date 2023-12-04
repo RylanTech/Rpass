@@ -7,7 +7,7 @@ function PassPage() {
     const [pass, setPass] = useState()
     const [show, setShow] = useState(false);
     const [show2, set2Show] = useState(false)
-    const [masterPass, setMasterPass] = useState()
+    const [masterPass, setMasterPass] = useState("")
     const [message, setMessage] = useState()
 
     const handleClose = () => setShow(false);
@@ -22,11 +22,6 @@ function PassPage() {
     const passName = params.name
 
     useEffect(() => {
-        // async function gettingPass() {
-        //     let pass = await getPass(passName)
-        //     setPass(pass)
-        // }
-        // gettingPass()
         handleShow()
     }, [])
 

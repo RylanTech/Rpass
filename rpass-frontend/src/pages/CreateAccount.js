@@ -1,34 +1,34 @@
-import { useContext, useState } from 'react'
-import { Button, Container, Form, Row } from 'react-bootstrap'
-import { UserContext } from '../contexts/UserContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { useContext, useState } from "react"
+import { Button, Container, Form, Row } from "react-bootstrap"
+import { Link, useNavigate } from "react-router-dom"
+import { UserContext } from "../contexts/UserContext";
 
-function Loginpage() {
+function CreateAccount() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [token, setToken] = useState("");
-    const [message, setMessage] = useState()
+    const [name, setName] = useState("");
+    const [message, setMessage] = useState();
 
-    const { login } = useContext(UserContext)
+    const { createAccount } = useContext(UserContext)
     const navigate = useNavigate()
 
     async function handleSubmit() {
-        try {
-            let credentials = {
-                email,
-                password,
-                token
-            }
-            let res = await login(credentials)
-            if (res.status === 200) {
-                navigate('/')
-            } else if (res.status === 203) {
-                setMessage("Incorrect email, password or 2FA key")
-            }
-        } catch {
+        const user = {
+            email: email,
+            name: name,
+            password: password
+        }
+
+        let newAcc = await createAccount(user)
+        if (newAcc.email && newAcc.userId) {
             navigate('/login')
+        } else if (newAcc === "email in use") {
+            setMessage("There is already and account associated with this email")
+        } else {
+            setMessage("There was an issue creating your account, please make sure all inputs are filled")
         }
     }
+
 
     return (
         <>
@@ -37,6 +37,13 @@ function Loginpage() {
                 <Row>
                     <div className='col-md-2' />
                     <div className='col-12 col-md-8'>
+                        <Form.Group>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </Form.Group>
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
                             <Form.Control
@@ -50,14 +57,6 @@ function Loginpage() {
                                 type='password'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>2FA key (If set up)</Form.Label>
-                            <Form.Control
-                                type='token'
-                                value={token}
-                                onChange={(e) => setToken(e.target.value)}
                             />
                         </Form.Group>
                     </div>
@@ -86,19 +85,19 @@ function Loginpage() {
                             <Button
                                 onClick={handleSubmit}
                                 className='col-12 col-md-8'
-                            >Login</Button>
+                            >Create an Account</Button>
                         </Link>
                     </Row>
                     <br />
                     <Row>
                         <div className='col-md-2' />
                         <Link
-                        to={'/create-account'}
-                        className='col-12'>
+                            to={'/login'}
+                            className='col-12'>
                             <Button
                                 variant='secondary'
                                 className='col-12 col-md-8'
-                            >Create an Account</Button>
+                            >Already have an account? Login</Button>
                         </Link>
                     </Row>
                 </center>
@@ -106,4 +105,4 @@ function Loginpage() {
         </>
     )
 }
-export default Loginpage
+export default CreateAccount

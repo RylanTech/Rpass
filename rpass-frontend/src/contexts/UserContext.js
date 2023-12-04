@@ -28,6 +28,12 @@ export const UserProvider = (props) => {
     })
   }
 
+  function createAccount(newUser) {
+    return axios.post(baseUrl + "api/user/create-account", newUser).then(response => {
+      return new Promise(resolve => resolve(response.data));
+    })
+  }
+
   function twoFactorStatus() {
     let myHeaders = {
       Authorization: `Bearer ${localStorage.getItem('rpassToken')}`
@@ -80,7 +86,8 @@ export const UserProvider = (props) => {
         twoFactorStatus,
         deleteTwoFactor,
         addTwoFactor,
-        testTwoFactor
+        testTwoFactor,
+        createAccount
       }}
     >
       {props.children}

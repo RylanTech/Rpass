@@ -30,17 +30,23 @@ export const createUser: RequestHandler = async (req, res, next) => {
     try {
         let newUser: user = req.body;
 
-        if (newUser.email && newUser.password) {
-            let hashedPassword = await hashPassword(newUser.password);
-            newUser.password = hashedPassword;
-            let created = await user.create(newUser);
-            res.status(201).json({
-                email: created.email,
-                userId: created.userId
-            });
+        if (newUser.email && newUser.password && newUser.name) {
+            let maybeSameEmail = await user.findOne({ where: { email: newUser.email } })
+            console.log(maybeSameEmail)
+            if (!maybeSameEmail) {
+                let hashedPassword = await hashPassword(newUser.password);
+                newUser.password = hashedPassword;
+                let created = await user.create(newUser);
+                res.status(201).json({
+                    email: created.email,
+                    userId: created.userId
+                });
+            } else {
+                res.status(200).send("email in use")
+            }
         }
         else {
-            res.status(400).send('email and password required');
+            res.status(200).send('email, password and name required');
         }
     } catch {
         res.status(500).send()
@@ -49,47 +55,43 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 export const loginUser: RequestHandler = async (req, res, next) => {
 
-    try {
-        if (req.body.email && req.body.password) {
-            // Look up user by their email
-            let existingUser: user | null = await user.findOne({
-                where: { email: req.body.email }
-            });
+    if (req.body.email && req.body.password) {
+        // Look up user by their email
+        let existingUser: user | null = await user.findOne({
+            where: { email: req.body.email }
+        });
 
-            // If user exists, check that password matches
-            if (existingUser) {
-                let passwordsMatch = await comparePasswords(req.body.password, existingUser.password);
+        // If user exists, check that password matches
+        if (existingUser) {
+            let passwordsMatch = await comparePasswords(req.body.password, existingUser.password);
 
-                // If passwords match, check 2FA
-                if (passwordsMatch) {
-                    if (existingUser.twoFactorKey !== null) {
-                        if (req.body.token) {
-                            let verified = await verifyTwoFactor(req.body.token, existingUser.userId)
-                            //If 2FA token is verified, return the JWT token
-                            if (verified) {
-                                let token = await signUserToken(existingUser);
-                                res.status(200).send(token)
-                            } else {
-                                res.status(203).send("Invalid 2FA code")
-                            }
+            // If passwords match, check 2FA
+            if (passwordsMatch) {
+                if (existingUser.twoFactorKey !== null) {
+                    if (req.body.token) {
+                        let verified = await verifyTwoFactor(req.body.token, existingUser.userId)
+                        //If 2FA token is verified, return the JWT token
+                        if (verified) {
+                            let token = await signUserToken(existingUser);
+                            res.status(200).send(token)
                         } else {
-                            res.status(203).send("token required")
+                            res.status(203).send("Invalid 2FA code")
                         }
                     } else {
-                        let token = await signUserToken(existingUser);
-                        res.status(200).json(token);
+                        res.status(203).send("token required")
                     }
-                }
-                else {
-                    res.status(203).json('Invalid password');
+                } else {
+                    let token = await signUserToken(existingUser);
+                    res.status(200).json(token);
                 }
             }
+            else {
+                res.status(203).json('Invalid password');
+            }
         }
-        else {
-            res.status(203).json('Invalid email');
-        }
-    } catch {
-        res.status(500).send()
+    }
+    else {
+        res.status(203).json('Invalid email');
     }
 }
 

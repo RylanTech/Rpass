@@ -38,7 +38,6 @@ function Homepage() {
     useEffect(() => {
         async function startup() {
             let res = await verify()
-            console.log(res)
             if (!res) {
                 navigate('/login')
             }
@@ -175,10 +174,10 @@ function Homepage() {
                         </center>
                     </Form>
                     <div>Take the 2FA secret and put it inside of an authenticator app (like google authenticator). From there, take the token (a 6 digit code) in the authenticator app and put it in the testing input.</div>
-                    <br/>
+                    <br />
                     {message ? (
                         <>
-                        <div className="message">{message}</div>
+                            <div className="message">{message}</div>
                         </>
                     ) : (
                         <>
@@ -186,23 +185,23 @@ function Homepage() {
                     )}
                     {successMessage ? (
                         <>
-                        <div className="successMessage">{successMessage}</div>
+                            <div className="successMessage">{successMessage}</div>
                         </>
                     ) : (
                         <>
                         </>
                     )}
-                    <br/>
+                    <br />
                     <Form>
                         <Form.Group>
                             <Form.Label>2FA token</Form.Label>
                             <Form.Control
-                            value={test2faToken}
-                            onChange={(e) => setTest2faToken(e.target.value)}
+                                value={test2faToken}
+                                onChange={(e) => setTest2faToken(e.target.value)}
                             />
                         </Form.Group>
                     </Form>
-                    <br/><br/>
+                    <br /><br />
                     <Button onClick={testingTwoFactor}>
                         Test 2FA
                     </Button>

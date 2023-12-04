@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 
 export const PassContext = createContext()
 let baseUrl = "http://localhost:3001/"
