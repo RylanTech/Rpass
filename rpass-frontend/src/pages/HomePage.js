@@ -110,11 +110,15 @@ function Homepage() {
     }
 
     function copyToClipboard(text) {
-
-        // Copy the text inside the text field
-        navigator.clipboard.writeText(text);
-    }
-
+        // Create a new asynchronous clipboard write promise
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            console.log('Text successfully copied to clipboard');
+          })
+          .catch(err => {
+            console.error('Unable to copy text to clipboard', err);
+          });
+      }
 
     function mapThroughSearches() {
         if (searchArr) {
