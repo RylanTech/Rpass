@@ -46,6 +46,17 @@ function PassPage() {
         navigate('/')
     }
 
+    function copyToClipboard(text) {
+        // Create a new asynchronous clipboard write promise
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                console.log('Text successfully copied to clipboard');
+            })
+            .catch(err => {
+                console.error('Unable to copy text to clipboard', err);
+            });
+    }
+
     function goThroughStuff() {
         let formattedMessage
         if (pass.otherNotes) {
@@ -53,55 +64,116 @@ function PassPage() {
         }
         return (
             <>
-
                 {pass.email ? (
-                    <div className="col-12 col-lg-6 entry">
-                        Email: <div className="fl">{pass.email}</div>
-                    </div>
+                    <>
+                        <div className="col-12">
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-8 entry">
+                                    Email:
+                                </div>
+                            </Row>
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-9 col-lg-7">
+                                    <Form.Group>
+                                        <Form.Control
+                                            className="col-12"
+                                            value={pass.email}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <div className="col-3 col-lg-1">
+                                    <Button onClick={() => copyToClipboard(pass.email)}>
+                                        Copy
+                                    </Button>
+                                </div>
+                                <div className="col-lg-2" />
+                            </Row>
+                            <div className="col-lg-2" />
+                            <br />
+                        </div>
+                    </>
                 ) : (
                     <></>
                 )}
                 {pass.username ? (
-                    <div className="col-12 col-lg-6 entry">
-                        Username: <div className="fl">{pass.username}</div>
-                    </div>
+                    <>
+                        <div className="col-lg-2" />
+                        <Form.Group className="col-12 col-lg-8">
+                            <div className="entry">
+                                Username:
+                            </div>
+                            <Form.Control
+                                value={pass.username}
+                            />
+                        </Form.Group>
+                        <div className="col-lg-2" />
+                        <br />
+                    </>
                 ) : (
                     <></>
                 )}
                 {pass.password ? (
-                    <div className="col-12 col-lg-6 entry">
-                        Password: <div className="fl">{pass.password}</div>
-                    </div>
+                    <>
+                        <div className="col-lg-2" />
+                        <Form.Group className="col-12 col-lg-8">
+                            <div className="entry">
+                                Password:
+                            </div>
+                            <Form.Control
+                                value={pass.password}
+                            />
+                        </Form.Group>
+                        <div className="col-lg-2" />
+                        <br />
+                    </>
                 ) : (
                     <></>
                 )}
                 {pass.twoFactorKey ? (
-                    <div className="col-12 col-lg-6 entry">
-                        Two Factor Key: <div className="fl">{pass.twoFactorKey}</div>
-                    </div>
+                    <>
+                        <div className="col-lg-2" />
+                        <Form.Group className="col-12 col-lg-8">
+                            <div className="entry">
+                                twoFactorKey:
+                            </div>
+                            <Form.Control
+                                value={pass.twoFactorKey}
+                            />
+                        </Form.Group>
+                        <div className="col-lg-2" />
+                        <br /><br />
+                    </>
                 ) : (
                     <></>
                 )}
                 {pass.otherNotes ? (
-                    <div className="col-12 col-lg-6 entry">
-                        Other Notes: <br />
-                        <div dangerouslySetInnerHTML={{ __html: formattedMessage }} />
-                    </div>
+                    <>
+                        <div className="col-lg-2" />
+                        <div className="col-12 col-lg-8 entry">
+                            Other Notes: <br />
+                            <div dangerouslySetInnerHTML={{ __html: formattedMessage }} />
+                        </div>
+                    </>
                 ) : (
                     <></>
                 )}
                 {pass.serviceName ? (
                     <>
-                        <br/><br/>
-                        <div className="col-3 col-lg-2">
-                            <Button variant="danger" className="delBtn col-12" onClick={handleDelete}>Delete</Button>
-                        </div>
-                        <div className="col-6 col-lg-8"/>
-                        <div className="col-3 col-lg-2">
-                            <Link to={`/edit/${passName}`}>
-                                <Button className="editBtn col-12">Edit</Button>
-                            </Link>
-                        </div>
+                        <Row>
+                            <div className="col-lg-2" />
+                            <div className="col-3 col-lg-2">
+                                <Button variant="danger" className="delBtn col-12" onClick={handleDelete}>Delete</Button>
+                            </div>
+                            <div className="col-6 col-lg-4" />
+                            <div className="col-3 col-lg-2">
+                                <Link to={`/edit/${passName}`}>
+                                    <Button className="editBtn col-12">Edit</Button>
+                                </Link>
+                            </div>
+                            <div className="col-lg-2" />
+                        </Row>
                     </>
                 ) : (
                     <></>
@@ -183,12 +255,18 @@ function PassPage() {
                     </Row>
                 </Container>
             </div>
-            <br/>
+            <br />
             <Container>
                 <Row>
-                    
+
                     {pass ? (
-                        goThroughStuff()
+                        <>
+                            <Form>
+                                <Row>
+                                    {goThroughStuff()}
+                                </Row>
+                            </Form>
+                        </>
                     ) : (
                         <></>
                     )}
