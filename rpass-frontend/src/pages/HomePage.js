@@ -111,13 +111,13 @@ function Homepage() {
     function copyToClipboard(text) {
         // Create a new asynchronous clipboard write promise
         navigator.clipboard.writeText(text)
-          .then(() => {
-            console.log('Text successfully copied to clipboard');
-          })
-          .catch(err => {
-            console.error('Unable to copy text to clipboard', err);
-          });
-      }
+            .then(() => {
+                console.log('Text successfully copied to clipboard');
+            })
+            .catch(err => {
+                console.error('Unable to copy text to clipboard', err);
+            });
+    }
 
     function mapThroughSearches() {
         if (searchArr) {
@@ -137,21 +137,34 @@ function Homepage() {
         }
     }
 
-    function mapThroughPassess() {
+    function mapThroughPasses() {
         if (passes) {
-            return passes.map((pass) => {
+            if (passes.length > 0) {
+                console.log(passes)
+                return passes.map((pass) => {
+                    return (
+                        <div className="col-12 col-md-6" key={pass}>
+                            <Link className="textNone" to={`/pass/${pass}`}>
+                                <div className="col-12 box">
+                                    <center>
+                                        <h2>{pass}</h2>
+                                    </center>
+                                </div>
+                            </Link>
+                        </div>
+                    )
+                })
+            } else {
                 return (
-                    <div className="col-12 col-md-6" key={pass}>
-                        <Link className="textNone" to={`/pass/${pass}`}>
-                            <div className="col-12 box">
-                                <center>
-                                    <h2>{pass}</h2>
-                                </center>
-                            </div>
-                        </Link>
-                    </div>
+                    <>
+                        <center>
+                            <br/>
+                            <h3>Hello there!</h3>
+                            <p>Go ahead and click the menu to create a pass. It is also recommended to set up 2FA.</p>
+                        </center>
+                    </>
                 )
-            })
+            }
         }
     }
 
@@ -364,7 +377,7 @@ function Homepage() {
             </div>
             <Container>
                 <Row>
-                    {mapThroughPassess()}
+                    {mapThroughPasses()}
                 </Row>
             </Container>
         </>

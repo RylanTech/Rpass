@@ -99,7 +99,7 @@ function CreatePage() {
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>two Factor Key</Form.Label>
+                            <Form.Label>2FA Key</Form.Label>
                             <Form.Control
                             value={twoFactorKey}
                             onChange={(e) => setTwoFactorKey(e.target.value)}
