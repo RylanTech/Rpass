@@ -4,6 +4,7 @@
   margin-top: 15px;
   color: black;
   border-radius: 5px;
+  cursor: pointer;
 }
 .textNone {
   text-decoration: none;

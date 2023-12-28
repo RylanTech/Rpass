@@ -47,14 +47,28 @@ function PassPage() {
     }
 
     function copyToClipboard(text) {
-        // Create a new asynchronous clipboard write promise
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                console.log('Text successfully copied to clipboard');
-            })
-            .catch(err => {
-                console.error('Unable to copy text to clipboard', err);
-            });
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+
+        // Append the textarea to the DOM
+        document.body.appendChild(textarea);
+
+        // Select the text in the textarea
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNode(textarea);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Remove the temporary textarea
+        document.body.removeChild(textarea);
     }
 
     function goThroughStuff() {
@@ -83,11 +97,9 @@ function PassPage() {
                                         />
                                     </Form.Group>
                                 </div>
-                                <div className="col-3 col-lg-1">
-                                    <Button onClick={() => copyToClipboard(pass.email)}>
-                                        Copy
-                                    </Button>
-                                </div>
+                                <Button className="col-3 col-lg-1" onClick={() => copyToClipboard(pass.email)}>
+                                    Copy
+                                </Button>
                                 <div className="col-lg-2" />
                             </Row>
                             <div className="col-lg-2" />
@@ -99,51 +111,93 @@ function PassPage() {
                 )}
                 {pass.username ? (
                     <>
-                        <div className="col-lg-2" />
-                        <Form.Group className="col-12 col-lg-8">
-                            <div className="entry">
-                                Username:
-                            </div>
-                            <Form.Control
-                                value={pass.username}
-                            />
-                        </Form.Group>
-                        <div className="col-lg-2" />
-                        <br />
+                        <div className="col-12">
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-8 entry">
+                                    Username:
+                                </div>
+                            </Row>
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-9 col-lg-7">
+                                    <Form.Group>
+                                        <Form.Control
+                                            className="col-12"
+                                            value={pass.username}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <Button className="col-3 col-lg-1" onClick={() => copyToClipboard(pass.username)}>
+                                    Copy
+                                </Button>
+                                <div className="col-lg-2" />
+                            </Row>
+                            <div className="col-lg-2" />
+                            <br />
+                        </div>
                     </>
                 ) : (
                     <></>
                 )}
                 {pass.password ? (
                     <>
-                        <div className="col-lg-2" />
-                        <Form.Group className="col-12 col-lg-8">
-                            <div className="entry">
-                                Password:
-                            </div>
-                            <Form.Control
-                                value={pass.password}
-                            />
-                        </Form.Group>
-                        <div className="col-lg-2" />
-                        <br />
+                        <div className="col-12">
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-8 entry">
+                                    Password:
+                                </div>
+                            </Row>
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-9 col-lg-7">
+                                    <Form.Group>
+                                        <Form.Control
+                                            className="col-12"
+                                            value={pass.password}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <Button className="col-3 col-lg-1" onClick={() => copyToClipboard(pass.password)}>
+                                    Copy
+                                </Button>
+                                <div className="col-lg-2" />
+                            </Row>
+                            <div className="col-lg-2" />
+                            <br />
+                        </div>
                     </>
                 ) : (
                     <></>
                 )}
                 {pass.twoFactorKey ? (
                     <>
-                        <div className="col-lg-2" />
-                        <Form.Group className="col-12 col-lg-8">
-                            <div className="entry">
-                                twoFactorKey:
-                            </div>
-                            <Form.Control
-                                value={pass.twoFactorKey}
-                            />
-                        </Form.Group>
-                        <div className="col-lg-2" />
-                        <br /><br />
+                        <div className="col-12">
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-8 entry">
+                                    2FA Key:
+                                </div>
+                            </Row>
+                            <Row>
+                                <div className="col-lg-2" />
+                                <div className="col-9 col-lg-7">
+                                    <Form.Group>
+                                        <Form.Control
+                                            className="col-12"
+                                            value={pass.twoFactorKey}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <Button className="col-3 col-lg-1" onClick={() => copyToClipboard(pass.twoFactorKey)}>
+                                    Copy
+                                </Button>
+                                <div className="col-lg-2" />
+                            </Row>
+                            <div className="col-lg-2" />
+                            <br />
+                        </div>
                     </>
                 ) : (
                     <></>
@@ -153,7 +207,8 @@ function PassPage() {
                         <div className="col-lg-2" />
                         <div className="col-12 col-lg-8 entry">
                             Other Notes: <br />
-                            <div dangerouslySetInnerHTML={{ __html: formattedMessage }} />
+                            <textarea value={formattedMessage} rows={5} cols={25} />
+
                         </div>
                     </>
                 ) : (
@@ -161,19 +216,15 @@ function PassPage() {
                 )}
                 {pass.serviceName ? (
                     <>
-                        <Row>
-                            <div className="col-lg-2" />
-                            <div className="col-3 col-lg-2">
-                                <Button variant="danger" className="delBtn col-12" onClick={handleDelete}>Delete</Button>
-                            </div>
-                            <div className="col-6 col-lg-4" />
-                            <div className="col-3 col-lg-2">
-                                <Link to={`/edit/${passName}`}>
-                                    <Button className="editBtn col-12">Edit</Button>
-                                </Link>
-                            </div>
-                            <div className="col-lg-2" />
-                        </Row>
+                        <div className="col-lg-2" />
+                        <div className="col-3 col-lg-2">
+                            <Button variant="danger" className="delBtn col-12" onClick={handleDelete}>Delete</Button>
+                        </div>
+                        <div className="col-6 col-lg-4" />
+                        <Link className="col-3 col-lg-2" to={`/edit/${passName}`}>
+                            <Button className="editBtn col-12">Edit</Button>
+                        </Link>
+                        <div className="col-lg-2" />
                     </>
                 ) : (
                     <></>
